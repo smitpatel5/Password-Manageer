@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurePass - Enterprise Password Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Sign In Page -->
+    <div id="signin-page" class="signin-container">
+        <div class="signin-card">
+            <div class="signin-header">
+                <i class="fas fa-shield-alt"></i>
+                <h1>SecurePass</h1>
+            </div>
+            
+            <!-- Sign In Form -->
+            <form id="signin-form" class="signin-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="email" id="email" placeholder="Email" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="master-password" placeholder="Password" required>
+                    <button type="button" class="password-toggle-btn" onclick="securePass.toggleSignInPassword()">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                
+                <button type="submit" class="signin-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="signin-footer">
+                <p>Don't have an account? <a href="#" id="show-create-account">Create Account</a></p>
+            </div>
+        </div>
+
+        <!-- Create Account Form (Hidden initially) -->
+        <div id="create-account-card" class="signin-card" style="display: none;">
+            <div class="signin-header">
+                <i class="fas fa-user-plus"></i>
+                <h1>Create Account</h1>
+                <p>Join SecurePass today</p>
+            </div>
+            
+            <form id="create-account-form" class="signin-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="create-name" placeholder="Full Name" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="create-email" placeholder="Email" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="create-password" placeholder="Password" required>
+                    <div class="password-requirements">
+                        <p>Password must contain:</p>
+                        <ul>
+                            <li id="create-req-length">At least 8 characters</li>
+                            <li id="create-req-uppercase">One uppercase letter</li>
+                            <li id="create-req-lowercase">One lowercase letter</li>
+                            <li id="create-req-number">One number</li>
+                            <li id="create-req-special">One special character (!@#$%^&*)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                </div>
+                
+                <button type="submit" class="signin-btn">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </button>
+            </form>
+            
+            <div class="signin-footer">
+                <p>Already have an account? <a href="#" id="show-signin">Sign In</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application (Hidden initially) -->
+    <div id="main-app" class="main-app" style="display: none;">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand" onclick="securePass.goToDashboard()" style="cursor: pointer;">
+                <i class="fas fa-shield-alt"></i>
+                <span>SecurePass</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="#passwords" class="nav-link" data-section="passwords">
+                    <i class="fas fa-key"></i>
+                    Passwords
+                </a>
+                <a href="#settings" class="nav-link" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </div>
+            
+            <div class="nav-user">
+                <span id="user-email"></span>
+                <button id="logout-btn" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1>Welcome to SecurePass</h1>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-key"></i>
+                        <h3 id="total-passwords">0</h3>
+                        <p>Total Passwords</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>256-bit</h3>
+                        <p>Encryption</p>
+                    </div>
+
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="showSection('passwords')">
+                        <i class="fas fa-plus"></i>
+                        Add New Password
+                    </button>
+                    <button class="action-btn" onclick="generatePassword()">
+                        <i class="fas fa-magic"></i>
+                        Generate Password
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Passwords Section -->
+        <section id="passwords" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Password Manager</h2>
+                    <div class="header-actions">
+                        <button class="action-btn" onclick="generatePassword()">
+                            <i class="fas fa-magic"></i>
+                            Generate Password
+                        </button>
+                        <button class="add-btn" onclick="showAddPasswordModal()">
+                            <i class="fas fa-plus"></i>
+                            Add Password
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-passwords" placeholder="Search passwords...">
+                </div>
+                
+                <div class="passwords-table-container">
+                    <table id="passwords-table" class="passwords-table">
+                        <thead>
+                            <tr>
+                                <th>Website/App</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="passwords-tbody">
+                            <!-- Passwords will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Account Settings</h2>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <i class="fas fa-user-shield"></i>
+                        <h3>Change Master Password</h3>
+                        <p>Update your master password for enhanced security</p>
+                        <button class="settings-btn" onclick="securePass.showChangePasswordModal()">
+                            Change Password
+                        </button>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <i class="fas fa-user"></i>
+                        <h3>Account Information</h3>
+                        <p>View your account details</p>
+                        <div class="account-info">
+                            <p><strong>Name:</strong> <span id="account-name"></span></p>
+                            <p><strong>Email:</strong> <span id="account-email"></span></p>
+                            <p><strong>Member since:</strong> <span id="account-created"></span></p>
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Change Password Modal -->
+        <div id="change-password-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Change Master Password</h3>
+                    <button class="close-btn" onclick="securePass.closeChangePasswordModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="change-password-form" class="modal-form">
+                    <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-master-password">New Password</label>
+                        <input type="password" id="new-master-password" required>
+                        <div class="password-requirements">
+                            <p>Password must contain:</p>
+                            <ul>
+                                <li id="req-length">At least 8 characters</li>
+                                <li id="req-uppercase">One uppercase letter</li>
+                                <li id="req-lowercase">One lowercase letter</li>
+                                <li id="req-number">One number</li>
+                                <li id="req-special">One special character (!@#$%^&*)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-master-password">Confirm New Password</label>
+                        <input type="password" id="confirm-new-password" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="securePass.closeChangePasswordModal()">Cancel</button>
+                        <button type="submit" class="save-btn">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Password Modal -->
+        <div id="add-password-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add New Password</h3>
+                    <button class="close-btn" onclick="closeAddPasswordModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="add-password-form" class="modal-form">
+                    <div class="form-group">
+                        <label for="new-website">Website/App</label>
+                        <input type="text" id="new-website" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-username">Username/Email</label>
+                        <input type="text" id="new-username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-password">Password</label>
+                        <div class="password-input-group">
+                            <input type="password" id="new-password" required>
+                            <button type="button" class="generate-pwd-btn" onclick="generateRandomPassword()">
+                                <i class="fas fa-magic"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closeAddPasswordModal()">Cancel</button>
+                        <button type="submit" class="save-btn">Save Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
